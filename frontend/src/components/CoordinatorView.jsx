@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+// import './CoordinatorView.css';
 const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
   const [formData, setFormData] = useState({
     campus: '',
@@ -144,7 +144,11 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
         </table>
 
         {/* Pagination Controls */}
-        <div className="pagination">
+     <div>
+      <br></br>
+     </div>
+      </div>
+      <div className="pagination">
           <button 
             disabled={currentPage === 1} 
             onClick={() => setCurrentPage(currentPage - 1)}
@@ -159,7 +163,6 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
             Next
           </button>
         </div>
-      </div>
     </div>
   );
 };
