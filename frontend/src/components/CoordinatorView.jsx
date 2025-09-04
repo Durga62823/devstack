@@ -10,6 +10,10 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
   });
   const [loading, setLoading] = useState(false);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,7 +31,7 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
     try {
       await axios.post('http://localhost:5000/api/room-allocations', {
         ...formData,
-        createdBy: 'Coordinator Name' // This would come from auth context in a real app
+        createdBy: 'Coordinator Name' // Replace with auth context
       });
       
       setMessage('Room allocation created successfully! Waiting for admin approval.');
@@ -40,6 +44,13 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
     
     setLoading(false);
   };
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAllocations = allocations.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(allocations.length / itemsPerPage);
 
   return (
     <div>
@@ -55,9 +66,9 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
               required
             >
               <option value="">Select Campus</option>
-              <option value="Main Campus">Kiet</option>
-              <option value="North Campus">Kiet+</option>
-              <option value="South Campus">Kiet Womens</option>
+              <option value="Kiet">Kiet</option>
+              <option value="kiet+">Kiet+</option>
+              <option value="Kiet Womens">Kiet Womens</option>
             </select>
           </div>
           
@@ -117,9 +128,9 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
             </tr>
           </thead>
           <tbody>
-            {allocations.map((allocation, index) => (
+            {currentAllocations.map((allocation, index) => (
               <tr key={allocation._id}>
-                <td>{index + 1}</td>
+                <td>{indexOfFirstItem + index + 1}</td>
                 <td>{allocation.campus}</td>
                 <td>{allocation.branch}</td>
                 <td>{allocation.mentorName}</td>
@@ -131,6 +142,23 @@ const CoordinatorView = ({ allocations, fetchAllocations, setMessage }) => {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination Controls */}
+        <div className="pagination">
+          <button 
+            disabled={currentPage === 1} 
+            onClick={() => setCurrentPage(currentPage - 1)}
+          >
+            Prev
+          </button>
+          <span> Page {currentPage} of {totalPages} </span>
+          <button 
+            disabled={currentPage === totalPages} 
+            onClick={() => setCurrentPage(currentPage + 1)}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
